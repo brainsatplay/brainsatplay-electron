@@ -4,6 +4,31 @@
 const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron')
 const path = require('path')
 
+const express = require('express');
+const WebSocket = require('ws');
+const bodyParser = require('body-parser');
+const myip = require('quick-local-ip');
+
+// Config
+const Config = {
+    http_port: '8080',
+    socket_port: '3030'
+};
+
+// Http server
+const _app = express();
+const server = require('http').Server(_app);
+server.listen(Config.http_port);
+
+// WSS server
+const wss = new WebSocket.Server({port: Config.socket_port});
+
+// Console print
+console.log('[SERVER]: WebSocket on: ' + myip.getLocalIP4() + ':' + Config.socket_port); // print websocket ip address
+console.log('[SERVER]: HTTP on: ' + myip.getLocalIP4() + ':' + Config.http_port); // print web server ip address
+
+
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -18,7 +43,7 @@ const createWindow = () => {
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -82,3 +107,62 @@ ipcMain.on('shell:open', () => {
     const pagePath = path.join('file://', pageDirectory, 'index.html')
     shell.openExternal(pagePath)
   })
+
+
+/**
+ * EXPRESS
+ */
+ _app.use(bodyParser.urlencoded({
+  extended: false
+}));
+
+_app.use('/assets', express.static(__dirname + '/www/assets'))
+
+_app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/www/index.html');
+});
+
+/**
+* WEBSOCKET
+*/
+wss.getUniqueID = function () {
+  function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+
+  return s4() + s4() + '-' + s4();
+};
+
+
+const echo = (input) => input
+
+wss.on('connection', function connection(ws, req) {
+  ws.id = wss.getUniqueID();
+
+  ws.on('close', function close() {
+      console.log('[SERVER]: Client disconnected.');
+  });
+
+  ws.on('message', function incoming(recieveData) {
+      const parsed = JSON.parse(recieveData);
+      console.log('[SERVER] Message:', parsed);
+      const result = echo(parsed)
+      send(result);
+  });
+
+  // Send back to client
+  function send(data) {
+      data = JSON.stringify(data);
+      
+      ws.send(data);
+  }
+
+  // // Send to all clients
+  // function sendAll(data) {
+  //     data = JSON.stringify(data);
+
+  //     wss.clients.forEach(function each(client) {
+  //         client.send(data);
+  //     });
+  // }
+});

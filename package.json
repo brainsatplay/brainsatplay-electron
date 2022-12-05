@@ -20,6 +20,9 @@
     "electron": "^22.0.0"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "express": "^4.18.2",
+    "quick-local-ip": "^1.0.7",
+    "ws": "^8.11.0"
   }
 }
