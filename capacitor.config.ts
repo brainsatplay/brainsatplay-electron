@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.brainsatplay.dev',
   appName: 'Brains@Play',
-  webDir: '../dist',
+  webDir: 'dist',
   bundledWebRuntime: false,
   plugins:{
     "BluetoothLe":{

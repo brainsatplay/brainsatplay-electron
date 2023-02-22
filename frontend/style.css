@@ -23,14 +23,23 @@
   text-align: center;
 }
 
-.logo {
+.item {
   height: 6em;
+  width: 6em;
+  border-radius: 1em;
+  background-color: #ffffff;
   padding: 1.5em;
+  margin: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:rgba(0, 0, 0, 0.2) 0 2px 2px;
   will-change: filter;
   transition: 0.75s;
+  cursor: pointer;
 }
 
-.logo.tauri:hover {
+.item.tauri:hover {
   filter: drop-shadow(0 0 2em #24c8db);
 }
 
