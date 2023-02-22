@@ -1,9 +1,8 @@
-# Brains@Play
+# cross-platform-monorepo
+This monorepo allows you to create cross platform applications easily using Tauri and Capacitor.
 
 ## Repo Structure
 - `frontend` - The frontend code for the app
-- `backend` - The backend code for the app
-    - `cli` - The brainsatplay CLI
 - `config` - The [Tauri] source files
 - `capacitor.config.js` - The [Capacitor] configuration file
 
